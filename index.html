@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>奇异棋的website 🐾</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --pink: #ffb6c1;
+      --blue: #a2d2ff;
+      --bg: #fff0f6;
+      --text: #333;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "PingFang SC", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    header {
+      background: linear-gradient(120deg, var(--pink), var(--blue));
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.8em;
+    }
+
+    header p {
+      margin-top: 10px;
+      font-size: 1.1em;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      background: white;
+      padding: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #555;
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      color: var(--pink);
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 30px 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.06);
+    }
+
+    .card h2 {
+      margin-top: 0;
+    }
+
+    .tags span {
+      background: var(--blue);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.8em;
+      margin-right: 6px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.9em;
+      color: #888;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>奇异棋的website</h1>
+    <p>看二次元，kig，小蓝梁（因学业压力，很少写代码了）</p>
+  </header>
+
+  <nav>
+    <a href="index.html">首页</a>
+    <a href="posts.html">文章</a>
+    <a href="projects.html">项目</a>
+    <a href="about.html">关于我</a>
+  </nav>
+
+  <div class="container">
+    <div class="card">
+      <h2>✨ 最新文章</h2>
+      <p><strong>《Hello World！》</strong></p>
+      <p>我的第一篇文章</p>
+    </div>
+
+    <div class="card">
+      <h2>正在写的东西</h2>
+      <p>📚 作业</p>
+      <h2>正在测试的东西</h2>
+      <p><a href="https://github.com/wwiinnddyy/LanMountainDesktop">阑山桌面</a></p>
+      <p><a href="https://classisland.tech/">Classisland</a></p>
+      <p><a href="https://easiauto.0xabcd.dev/">Easi Auto</a></p>
+      <p><a href="https://inkcanvasforclass.github.io/"></a>icc-ce</a></p>
+    </div>
+  </div>
+
+  <footer>
+    © 2026 ssq0324 | Powered by GitHub Pages & ❤️
+  </footer>
+</body>
+</html>

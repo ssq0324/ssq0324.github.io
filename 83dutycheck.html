@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>八（3）班劳动值日监督系统</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "微软雅黑", sans-serif; }
+        body { background-color: #f5f7fa; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 30px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { color: #2c3e50; font-size: 24px; margin-bottom: 10px; }
+        .date { color: #7f8c8d; font-size: 18px; }
+        .today-tag { background: #008cff; color: white; padding: 2px 8px; border-radius: 4px; font-size: 14px; margin-left: 10px; }
+        .tab-container { margin-bottom: 20px; }
+        .tab { display: inline-block; paddiConfigure Display Languageng: 10px 20px; background: #ecf0f1; border: none; border-radius: 6px 6px 0 0; cursor: pointer; font-size: 30px; margin-right: 5px; }
+        .tab.active { background: #0077ff; color: white; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { padding: 12px; text-align: center; border: 1px solid #ddd; }
+        th { background: #fa8947; color: white; font-weight: normal; }
+        tr:nth-child(even) { background: #f9f9f9; }
+        tr.today { background: #e3f2fd; }
+        .btn-check { background: #2ecc71; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
+        .btn-check:hover { background: #27ae60; }
+        .btn-check.disabled { background: #95a5a6; cursor: not-allowed; }
+        .btn-reset { background: #ff0000; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin-left: 20px; }
+        .btn-reset:hover { background: #c0392b; }
+        .uncheck { color: #e74c3c; }
+        .checked { color: #27ae60; }
+        .supervisor { background: #f1c40f; color: #2c3e50; font-weight: bold; }
+        .reset-info { text-align: right; color: #7f8c8d; margin-bottom: 10px; font-size: 14px; }
+        .section-title { color: #2c3e50; margin: 20px 0 10px; font-size: 18px; }
+        .header-actions { margin: 10px 0 20px; text-align: center; }
+        /* --- 新增：汇总表格样式 --- */
+        #summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        #summary-table th, 
+        #summary-table td {
+            padding: 10px;
+            border: 1px solid #dddddd;
+            text-align: center;
+        }
+        #summary-table th {
+            background-color: #fa8947;
+            color: white;
+            font-weight: normal;
+        }
+        #summary-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .summary-stats {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        /* 导出按钮 */
+        .btn-export {
+            background: #2980b9;
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: 0.2s;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        .btn-export:hover {
+            background: #2471a3;
+        }
+    </style>
+    <!-- 加在 <head> 最末尾或 </body> 之前均可 -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>八（3）班劳动值日监督系统</h1>
+            <div class="date" id="current-date"></div>
+                <div class="header-actions">
+                    <button class="btn-reset" onclick="manualReset()">手动重置所有打卡记录</button>
+                </div>
+        </div>
+
+        <div class="tab-container">
+            <button class="tab active" onclick="switchTab('monday')">周一</button>
+            <button class="tab" onclick="switchTab('tuesday')">周二</button>
+            <button class="tab" onclick="switchTab('wednesday')">周三</button>
+            <button class="tab" onclick="switchTab('thursday')">周四</button>
+            <button class="tab" onclick="switchTab('friday')">周五</button>
+            <button class="tab" onclick="switchTab('summary')">打卡汇总</button>
+        </div>
+
+        <!-- 周一 tab -->
+        <div class="tab-content active" id="monday" data-weekday="1">
+            <h3 class="section-title">周一 · 教室值日</h3>
+            <table>
+                <tr><th>岗位</th><th>负责人</th><th>早自习前打卡</th><th>午自习前打卡</th><th>放学后打卡</th></tr>
+                <tr><td>扫教室内外</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>擦教室所有的墙面、黑板、窗户</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>拖整个教室</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>排教室桌椅、倒垃圾、浇花</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>拖教室班级所有阳台（包括书吧、阳台和饮水机旁边）</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+            </table>
+
+            <h3 class="section-title">周一 · 包干区值日</h3>
+            <table>
+                <tr><th>岗位</th><th>负责人</th><th>早自习前打卡</th><th>午自习前打卡</th><th>放学后打卡</th></tr>
+                <tr><td>擦包干区所有墙面和黑色瓷砖</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>拖扫包干区车棚—1楼和医务室前廊</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>擦包干区所有栏杆和黑色瓷砖</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>拖扫包干区1——3楼（八6班旁边）</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>拖扫包干区3——5楼（八6班旁边）</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+            </table>
+
+            <h3 class="section-title">周一 · 自习室6值日</h3>
+            <table>
+                <tr><th>岗位</th><th>负责人</th><th>早自习前打卡</th><th>午自习前打卡</th><th>放学后打卡</th></tr>
+                <tr><td>拖扫自习室6全部</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>擦墙、黑板、窗户+排座位+倒垃圾</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+            </table>
+        </div>
+
+        <!-- 周二 tab -->
+         <div class="tab-content" id="tuesday" data-weekday="2">
+            <h3 class="section-title">周二 · 教室值日</h3>
+            <table>
+                <tr><th>岗位</th><th>负责人</th><th>早自习前打卡</th><th>午自习前打卡</th><th>放学后打卡</th></tr>
+                <tr><td>扫教室内外</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>擦教室所有的墙面、黑板、窗户</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>拖整个教室</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>排教室桌椅、倒垃圾、浇花</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>拖教室班级所有阳台（包括书吧、阳台和饮水机旁边）</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+            </table>
+
+            <h3 class="section-title">周二 · 包干区值日</h3>
+            <table>
+                <tr><th>岗位</th><th>负责人</th><th>早自习前打卡</th><th>午自习前打卡</th><th>放学后打卡</th></tr>
+                <tr><td>擦包干区所有墙面和黑色瓷砖</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>拖扫包干区车棚—1楼和医务室前廊</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>擦包干区所有栏杆和黑色瓷砖</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>拖扫包干区1——3楼（八6班旁边）</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>拖扫包干区3——5楼（八6班旁边）</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+            </table>
+
+            <h3 class="section-title">周二 · 自习室6值日</h3>
+            <table>
+                <tr><th>岗位</th><th>负责人</th><th>早自习前打卡</th><th>午自习前打卡</th><th>放学后打卡</th></tr>
+                <tr><td>拖扫自习室6全部</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>擦墙、黑板、窗户+排座位+倒垃圾</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+            </table>
+        </div>
+       
+
+        <!-- 周三 tab -->
+        <div class="tab-content" id="wednesday" data-weekday="3">
+            <h3 class="section-title">周三 · 教室值日</h3>
+            <table>
+                <tr><th>岗位</th><th>负责人</th><th>早自习前打卡</th><th>午自习前打卡</th><th>放学后打卡</th></tr>
+                <tr><td>扫教室内外</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>擦教室所有的墙面、黑板、窗户</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>拖整个教室</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>排教室桌椅、倒垃圾、浇花</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>拖教室班级所有阳台（包括书吧、阳台和饮水机旁边）</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+            </table>
+
+            <h3 class="section-title">周三 · 包干区值日</h3>
+            <table>
+                <tr><th>岗位</th><th>负责人</th><th>早自习前打卡</th><th>午自习前打卡</th><th>放学后打卡</th></tr>
+                <tr><td>擦包干区所有墙面和黑色瓷砖</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>拖扫包干区车棚—1楼和医务室前廊</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>擦包干区所有栏杆和黑色瓷砖</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>拖扫包干区1——3楼（八6班旁边）</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>拖扫包干区3——5楼（八6班旁边）</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+            </table>
+
+            <h3 class="section-title">周三 · 自习室6值日</h3>
+            <table>
+                <tr><th>岗位</th><th>负责人</th><th>早自习前打卡</th><th>午自习前打卡</th><th>放学后打卡</th></tr>
+                <tr><td>拖扫自习室6全部</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>擦墙、黑板、窗户+排座位+倒垃圾</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+            </table>
+        </div>
+
+        <!-- 周四 tab -->
+        <div class="tab-content" id="thursday" data-weekday="4">
+            <h3 class="section-title">周四 · 教室值日</h3>
+            <table>
+                <tr><th>岗位</th><th>负责人</th><th>早自习前打卡</th><th>午自习前打卡</th><th>放学后打卡</th></tr>
+                <tr><td>扫教室内外</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>擦教室所有的墙面、黑板、窗户</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>拖整个教室</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>排教室桌椅、倒垃圾、浇花</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>拖教室班级所有阳台（包括书吧、阳台和饮水机旁边）</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+            </table>
+
+            <h3 class="section-title">周四 · 包干区值日</h3>
+            <table>
+                <tr><th>岗位</th><th>负责人</th><th>早自习前打卡</th><th>午自习前打卡</th><th>放学后打卡</th></tr>
+                <tr><td>擦包干区所有墙面和黑色瓷砖</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>拖扫包干区车棚—1楼和医务室前廊</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>擦包干区所有栏杆和黑色瓷砖</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>拖扫包干区1——3楼（八6班旁边）</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>拖扫包干区3——5楼（八6班旁边）</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+            </table>
+
+            <h3 class="section-title">周四 · 自习室6值日</h3>
+            <table>
+                <tr><th>岗位</th><th>负责人</th><th>早自习前打卡</th><th>午自习前打卡</th><th>放学后打卡</th></tr>
+                <tr><td>拖扫自习室6全部</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>擦墙、黑板、窗户+排座位+倒垃圾</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+            </table>
+        </div>
+
+        <!-- 周五 tab -->
+        <div class="tab-content" id="friday" data-weekday="5">
+            <h3 class="section-title">周五 · 教室值日</h3>
+            <table>
+                <tr><th>岗位</th><th>负责人</th><th>早自习前打卡</th><th>午自习前打卡</th><th>放学后打卡</th></tr>
+                <tr><td>扫教室内外</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>擦教室所有的墙面、黑板、窗户</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>拖整个教室</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>排教室桌椅、倒垃圾、浇花</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>拖教室班级所有阳台（包括书吧、阳台和饮水机旁边）</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+            </table>
+
+            <h3 class="section-title">周五 · 包干区值日</h3>
+            <table>
+                <tr><th>岗位</th><th>负责人</th><th>早自习前打卡</th><th>午自习前打卡</th><th>放学后打卡</th></tr>
+                <tr><td>擦包干区所有墙面和黑色瓷砖</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>拖扫包干区车棚—1楼和医务室前廊</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>擦包干区所有栏杆和黑色瓷砖</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>拖扫包干区1——3楼（八6班旁边）</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>拖扫包干区3——5楼（八6班旁边）</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+            </table>
+
+            <h3 class="section-title">周五 · 自习室6值日</h3>
+            <table>
+                <tr><th>岗位</th><th>负责人</th><th>早自习前打卡</th><th>午自习前打卡</th><th>放学后打卡</th></tr>
+                <tr><td>拖扫自习室6全部</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+                <tr><td>擦墙、黑板、窗户+排座位+倒垃圾</td><td>-</td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td><td><button class="btn-check" onclick="checkIn(this)">打卡</button></td></tr>
+            </table>
+        </div>
+
+        <!-- 打卡汇总 tab -->
+        <div class="tab-content" id="summary">
+            <h3>今日打卡情况（<span id="summary-date"></span>）</h3>
+            <!-- 替换原 <div id="summary-content"><p>加载中...</p></div> 为以下代码 -->
+            <div id="summary-content">
+                <button class="btn-export" onclick="exportWeeklyExcel()">📥 导出本周Excel</button>
+                <table id="summary-table">
+                    <thead>
+                        <tr>
+                            <th>星期</th>
+                            <th>区域</th>
+                            <th>岗位</th>
+                            <th>负责人</th>
+                            <th>打卡时段</th>
+                            <th>状态</th>
+                            <th>打卡时间</th>
+                        </tr>
+                    </thead>
+                    <tbody id="summary-tbody">
+                        <!-- 数据由JS动态填充 -->
+                    </tbody>
+                </table>
+                <div id="stats-display" class="summary-stats"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // 存储打卡数据（本地存储，避免刷新丢失）
+        const STORAGE_KEY = 'class4CleanRecord';
+
+        // 初始化页面
+        initPage();
+
+        // 初始化函数
+        function initPage() {
+            // 显示当前日期
+            updateDateDisplay();
+            // 激活今日对应的tab并高亮
+            activateTodayTab();
+            // 加载已保存的打卡记录
+            loadCheckInRecords();
+            // 更新汇总
+            updateSummary();
+            // 定时更新日期（每分钟一次）
+            setInterval(updateDateDisplay, 60000);
+        }
+
+        // 手动重置所有打卡记录
+        function manualReset() {
+            if (confirm('确定要手动重置所有打卡记录吗？此操作不可撤销！')) {
+                localStorage.removeItem(STORAGE_KEY);
+                // 重置所有按钮状态
+                const allBtns = document.querySelectorAll('.btn-check');
+                allBtns.forEach(btn => {
+                    btn.textContent = '打卡';
+                    btn.classList.remove('disabled');
+                    btn.disabled = false;
+                });
+                // 更新汇总
+                updateSummary();
+                alert('所有打卡记录已重置成功！');
+            }
+        }
+
+        // 更新日期显示
+        function updateDateDisplay() {
+            const now = new Date();
+            const weekDays = ['日','一','二','三','四','五','六'];
+            const dateStr = `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日（${weekDays[now.getDay()]}）`;
+            document.getElementById('current-date').textContent = dateStr;
+            document.getElementById('summary-date').textContent = dateStr;
+        }
+
+        // 激活今日对应的tab并高亮
+        function activateTodayTab() {
+            const now = new Date();
+            const todayWeekday = now.getDay(); // 0=周日，1=周一...5=周五
+            const tabIds = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+            const tabIndex = todayWeekday - 1;
+
+            // 如果是工作日，激活对应tab并高亮表格
+            if (tabIndex >= 0 && tabIndex < 5) {
+                switchTab(tabIds[tabIndex]);
+                const todayTab = document.getElementById(tabIds[tabIndex]);
+                todayTab.classList.add('today');
+                // 高亮今日表格中的所有行
+                const todayTables = todayTab.querySelectorAll('table tr');
+                todayTables.forEach(row => row.classList.add('today'));
+            }
+        }
+
+        // 切换tab
+        function switchTab(tabId) {
+            const tabs = document.getElementsByClassName('tab');
+            const contents = document.getElementsByClassName('tab-content');
+            for(let i=0; i<tabs.length; i++) {
+                tabs[i].classList.remove('active');
+                contents[i].classList.remove('active');
+            }
+            document.querySelector(`.tab[onclick="switchTab('${tabId}')"]`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // 打卡功能
+        function checkIn(btn) {
+            const now = new Date();
+            const timeStr = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
+            // 更新按钮状态
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            btn.textContent =`已打卡\n(${year}/${month}/${day}\n${timeStr})`;
+            btn.classList.add('disabled');
+            btn.disabled = true;
+            // 保存打卡记录
+            saveCheckInRecord(btn);
+            // 更新汇总
+            updateSummary();
+        }
+
+        // 保存打卡记录到本地存储
+        function saveCheckInRecord(btn) {
+            const recordKey = getRecordKey(btn);
+            const records = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+            records[recordKey] = new Date().toISOString();
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+        }
+
+        // 生成打卡记录的唯一标识
+        function getRecordKey(btn) {
+            const tab = btn.closest('.tab-content');
+            const weekday = tab.dataset.weekday;
+            const table = btn.closest('table');
+            const section = table.previousElementSibling.textContent;
+            const row = btn.closest('tr');
+            const post = row.querySelector('td:first-child').textContent;
+            const name = row.querySelector('td:nth-child(2)').textContent;
+            const timeTypeIndex = Array.from(row.querySelectorAll('button.btn-check')).indexOf(btn);
+            const timeType = ['早自习前', '午自习前', '放学后'][timeTypeIndex];
+            return `${weekday}-${section}-${post}-${name}-${timeType}`;
+        }
+
+        // 加载已保存的打卡记录
+        function loadCheckInRecords() {
+            const records = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+            const allBtns = document.querySelectorAll('.btn-check');
+            
+            allBtns.forEach(btn => {
+                const key = getRecordKey(btn);
+                if (records[key]) {
+                    const date = new Date(records[key]);
+                    const timeStr = `${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')}:${date.getSeconds().toString().padStart(2,'0')}`;
+                    const year = now.getFullYear();
+                    const month = String(now.getMonth() + 1).padStart(2, '0');
+                    const day = String(now.getDate()).padStart(2, '0');
+                    btn.textContent = `已打卡'\n(${year}/${month}/${day}\n${timeStr})`;
+                    btn.classList.add('disabled');
+                    btn.disabled = true;
+                }
+            });
+        }
+
+        // 更新打卡汇总
+        // ================= 修复版：updateSummary（解决读不到记录） =================
+        function updateSummary() {
+            const tbody = document.getElementById('summary-tbody');
+            const statsEl = document.getElementById('stats-display');
+            tbody.innerHTML = '';
+
+            const records = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+            const weekdaysMap = ['日', '一', '二', '三', '四', '五', '六'];
+
+            let totalCount = 0, checkedCount = 0, htmlBuffer = '';
+
+            ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].forEach((tabId, idx) => {
+                const tab = document.getElementById(tabId);
+                if (!tab) return;
+
+                const weekdayName = `周${weekdaysMap[idx + 1]}`;
+                const tables = tab.querySelectorAll('table');
+
+                tables.forEach(table => {
+                    // 🔴 关键修复：去掉“周一 · ”前缀，和 getRecordKey 保持一致
+                    const sectionTitle = table.previousElementSibling;
+                    const sectionText = sectionTitle.textContent.replace(/^[^·]*·\s*/, '').trim(); // 去掉“周一 · ”
+                    const rows = table.querySelectorAll('tr:not(:first-child)');
+
+                    rows.forEach(row => {
+                        const post = row.cells[0].textContent.trim();
+                        const name = row.cells[1].textContent.trim();
+                        const btns = row.querySelectorAll('button.btn-check');
+
+                        btns.forEach((btn, timeIdx) => {
+                            totalCount++;
+                            const timeSlot = ['早自习前', '午自习前', '放学后'][timeIdx];
+
+                            // 🔴 用真实 btn 调用 getRecordKey，确保 key 一致
+                            const recordKey = getRecordKey(btn).replace(/\n/g, '').trim();
+                            const savedTime = records[recordKey];
+
+                            if (savedTime) {
+                                checkedCount++;
+                                const d = new Date(savedTime);
+                                const y = d.getFullYear();
+                                const m = (d.getMonth() + 1).toString().padStart(2, '0');
+                                const day = d.getDate().toString().padStart(2, '0');
+                                const h = d.getHours().toString().padStart(2, '0');
+                                const min = d.getMinutes().toString().padStart(2, '0');
+                                const timeStr = `${y}/${m}/${day} ${h}:${min}`;
+
+                                htmlBuffer += `
+                                    <tr>
+                                        <td>${weekdayName}</td>
+                                        <td>${sectionText}</td>
+                                        <td>${post}</td>
+                                        <td>${name}</td>
+                                        <td>${timeSlot}</td>
+                                        <td class="checked">✅ 已打卡</td>
+                                        <td>${timeStr}</td>
+                                    </tr>`;
+                            } else {
+                                htmlBuffer += `
+                                    <tr>
+                                        <td>${weekdayName}</td>
+                                        <td>${sectionText}</td>
+                                        <td>${post}</td>
+                                        <td>${name}</td>
+                                        <td>${timeSlot}</td>
+                                        <td class="uncheck">❌ 未打卡</td>
+                                        <td>-</td>
+                                    </tr>`;
+                            }
+                        });
+                    });
+                });
+            });
+
+            tbody.innerHTML = htmlBuffer;
+            statsEl.innerHTML = `本周总任务项：${totalCount} | 已完成：<span style="color:#27ae60">${checkedCount}</span> | 未完成：<span style="color:#e74c3c">${totalCount - checkedCount}</span>`;
+        }
+
+        // ================= 修复版：loadCheckInRecords（解决刷新丢记录） =================
+        function loadCheckInRecords() {
+            const records = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+            const allBtns = document.querySelectorAll('.btn-check');
+
+            allBtns.forEach(btn => {
+                const key = getRecordKey(btn).replace(/\n/g, '').trim();
+                if (records[key]) {
+                    const date = new Date(records[key]);
+                    const y = date.getFullYear();
+                    const m = (date.getMonth() + 1).toString().padStart(2, '0');
+                    const d = date.getDate().toString().padStart(2, '0');
+                    const h = date.getHours().toString().padStart(2, '0');
+                    const min = date.getMinutes().toString().padStart(2, '0');
+                    const sec = date.getSeconds().toString().padStart(2, '0');
+                    const timeStr = `${h}:${min}:${sec}`;
+
+                    // 🔴 用 innerHTML 支持换行（和你之前需求一致）
+                    btn.innerHTML = `已打卡<br>(${y}/${m}/${d}<br>${timeStr})`;
+                    btn.classList.add('disabled');
+                    btn.disabled = true;
+                }
+            });
+        }
+
+        // ================= 导出 Excel（原版可用，微调防错） =================
+        function exportWeeklyExcel() {
+            if (typeof XLSX === 'undefined') {
+                alert('导出库未加载，请刷新重试。');
+                return;
+            }
+
+            const personMap = {};
+            const trs = document.querySelectorAll('#summary-tbody tr');
+            const weekSlots = {};
+
+            // 1. 聚合数据（同之前）
+            trs.forEach(tr => {
+                const tds = tr.querySelectorAll('td');
+                const weekday = tds[0].innerText.trim();
+                const area = tds[1].innerText.trim();
+                const post = tds[2].innerText.trim();
+                const name = tds[3].innerText.trim();
+                const slot = tds[4].innerText.trim();
+                let timeText = tds[6].innerText.trim();
+
+                const key = `${area}|${post}|${name}`;
+                if (!personMap[key]) personMap[key] = { area, post, name };
+
+                const colKey = `${weekday}${slot === '早自习前' ? '早' : slot === '午自习前' ? '午' : '晚'}`;
+                weekSlots[colKey] = true;
+
+                personMap[key][colKey] = timeText !== '-' ? timeText : '-';
+            });
+
+            // 2. 动态列：周一早..周五晚
+            const slotOrder = [];
+            ['周一', '周二', '周三', '周四', '周五'].forEach(day => {
+                ['早', '午', '晚'].forEach(slot => {
+                    const k = day + slot;
+                    if (weekSlots[k]) slotOrder.push({ key: k, label: k });
+                });
+            });
+
+            // 3. 转 SheetJS 可用的对象数组
+            const dataRows = Object.values(personMap).map(p => {
+                const obj = { 区域: p.area, 岗位: p.post, 负责人: p.name };
+                slotOrder.forEach(slot => obj[slot.key] = p[slot.key] || '-');
+                return obj;
+            });
+
+            if (dataRows.length === 0) {
+                alert('暂无打卡数据');
+                return;
+            }
+
+            // 4. 创建工作簿与工作表
+            const ws = XLSX.utils.json_to_sheet(dataRows, { header: ['区域','岗位','负责人',...slotOrder.map(s=>s.label)] });
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, '本周汇总');
+
+            // 🔴 关键：设置列属性（宽度+文本格式）
+            const colWidths = [
+                { wch: 11 }, // 区域
+                { wch: 15 }, // 岗位
+                { wch: 6 }, // 负责人
+                ...slotOrder.map(() => ({ wch: 17 })) // 每个时间列宽20
+            ];
+            ws['!cols'] = colWidths;
+
+            // 标记所有单元格为文本 @（防日期转换）
+            const range = XLSX.utils.decode_range(ws['!ref']);
+            for (let r = range.s.r; r <= range.e.r; r++) {
+                for (let c = range.s.c; c <= range.e.c; c++) {
+                    const addr = XLSX.utils.encode_cell({ r, c });
+                    if (!ws[addr]) continue;
+                    // 保留原值，只加 format
+                    ws[addr].z = '@'; // 文本格式代码
+                }
+            }
+
+            // 5. 导出
+            const weekNum = getWeekNumber(new Date());
+            const filename = `定海五中八(3)班第${weekNum-7}周打卡汇总.xlsx`;
+            XLSX.writeFile(wb, filename);
+        }
+
+        function getWeekNumber(d) {
+            const firstDay = new Date(d.getFullYear(), 0, 1);
+            const diffDays = Math.floor((d - firstDay) / 86400000);
+            return Math.ceil((diffDays + firstDay.getDay()) / 7);
+        }
+    </script>
+</body>
+</html>
