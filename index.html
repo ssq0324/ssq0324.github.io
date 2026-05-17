@@ -2,32 +2,35 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <title>奇异棋的website 🐾</title>
+  <title>🍬 奇异棋的个人博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     :root {
-      --pink: #ffb6c1;
-      --blue: #a2d2ff;
-      --bg: #fff0f6;
-      --text: #333;
+      --pink: #ffcce5;
+      --blue: #d6f0ff;
+      --yellow: #fff3b0;
+      --text: #5a5a5a;
+    }
+
+    * {
+      box-sizing: border-box;
     }
 
     body {
       margin: 0;
       font-family: "Segoe UI", "PingFang SC", sans-serif;
-      background: var(--bg);
+      background: linear-gradient(var(--pink), var(--blue));
       color: var(--text);
     }
 
     header {
-      background: linear-gradient(120deg, var(--pink), var(--blue));
-      padding: 40px 20px;
       text-align: center;
+      padding: 50px 20px 30px;
     }
 
     header h1 {
-      margin: 0;
       font-size: 2.8em;
+      margin: 0;
     }
 
     header p {
@@ -38,20 +41,20 @@
     nav {
       display: flex;
       justify-content: center;
-      gap: 20px;
-      background: white;
+      gap: 18px;
+      background: rgba(255,255,255,0.7);
       padding: 12px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      border-radius: 0 0 20px 20px;
     }
 
     nav a {
       text-decoration: none;
-      color: #555;
+      color: #666;
       font-weight: bold;
     }
 
     nav a:hover {
-      color: var(--pink);
+      color: #ff8ec7;
     }
 
     .container {
@@ -61,23 +64,23 @@
     }
 
     .card {
-      background: white;
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.06);
+      background: rgba(255,255,255,0.85);
+      border-radius: 24px;
+      padding: 22px;
+      margin-bottom: 22px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+      transition: transform 0.3s;
     }
 
-    .card h2 {
-      margin-top: 0;
+    .card:hover {
+      transform: translateY(-6px);
     }
 
     .tags span {
-      background: var(--blue);
-      color: white;
+      background: var(--yellow);
       padding: 4px 10px;
       border-radius: 12px;
-      font-size: 0.8em;
+      font-size: 0.75em;
       margin-right: 6px;
     }
 
@@ -92,20 +95,25 @@
 
 <body>
   <header>
-    <h1>奇异棋的website</h1>
-    <p>看二次元，kig，小蓝梁（因学业压力，很少写代码了）</p>
+    <h1>🍓 奇异棋的个人博客 ❤️</h1>
+    <p>喜欢看二次元，kig，小蓝梁（因学业压力，很少写代码了） ☁️</p>  
+   <h2><a href="https://space.bilibili.com/1328322258">B站</a>、视频号：奇异棋007|抖音、小红书：奇异棋</h2>
   </header>
 
   <nav>
-    <a href="index">首页</a>
-    <a href="posts">文章</a>
-    <a href="projects">项目</a>
-    <a href="about.html">关于我</a>
+    <a href="index.html">首页</a>
+    <a href="posts.html">文章</a>
+    <a href="video.html">视频</a>
+    <a href="projects.html">项目</a>
+    <a href="http://qiyiqi.520wt.shop/wordpress/">Wordpress</a>
+    <a href="about.html">关于</a>
+    <a href="https://space.bilibili.com/1328322258">B站</a>
+
   </nav>
 
   <div class="container">
     <div class="card">
-      <h2>✨ 最新文章</h2>
+      <h2>✨ 最新文章</h2><br>
       <p><strong>《Hello World！》</strong></p>
       <p>我的第一篇文章</p>
     </div>
@@ -113,16 +121,18 @@
     <div class="card">
       <h2>正在写的东西</h2>
       <p>📚 作业</p>
+      <p>python数据分离工具（到时候会打包成exe）</p>
+      <br>
       <h2>正在测试的东西</h2>
       <p><a href="https://github.com/wwiinnddyy/LanMountainDesktop">阑山桌面</a></p>
       <p><a href="https://classisland.tech/">Classisland</a></p>
       <p><a href="https://easiauto.0xabcd.dev/">Easi Auto</a></p>
-      <p><a href="https://inkcanvasforclass.github.io/"></a>icc-ce</a></p>
+      <p><a href="https://inkcanvasforclass.github.io/">icc-ce</a></p>
     </div>
   </div>
 
   <footer>
-    © 2026 ssq0324 | Powered by GitHub Pages & ❤️
+    © 2026 奇异棋 | Made with 🍬 & GitHub Pages
   </footer>
 </body>
 </html>
