@@ -1,26 +1,178 @@
 <!DOCTYPE html>
-<html lang="en">
-    <link rel="icon" href="logo.ico" type="image/x-icon">
-    <title>never gonna give you up~</title>
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="logo.ico" type="image/x-icon" />
+    <title>never gonna give you up~</title>
+    <style>
+        /* 全局重置，撑满全屏 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<iframe
-src="https://player.bilibili.com/player.html?&aid=80433022&bvid=BV1GJ411x7h7&cid=137649199&page=1&high_quality=1&danmaku=1&as_wide=1"
-scrolling="no"
-border="0"
-frameborder="no"
-framespacing="0"
-allowfullscreen="true"
-style="position:absolute;top:0;left:0;width:80%;height:80%;">
-</iframe>
-    
+        body {
+            background: #000;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', 'PingFang SC', Roboto, sans-serif;
+            padding: 20px;
+        }
+
+        /* 视频容器 — 宽高比 16:9，宽度不超过 960px */
+        .video-wrapper {
+            position: relative;
+            width: 90vw;
+            max-width: 900px;
+            aspect-ratio: 16 / 9;
+            background: #0a0a0a;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(255, 70, 70, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* “你被骗了！” 区域 — 紧贴视频下方 */
+        .trick-message {
+            margin-top: 24px;
+            text-align: center;
+            user-select: none;
+            animation: glitch-pulse 2.4s ease-in-out infinite alternate;
+        }
+
+        .trick-message h1 {
+            font-size: clamp(2.8rem, 10vw, 6rem);
+            font-weight: 800;
+            letter-spacing: 6px;
+            color: #ffe600;
+            text-shadow:
+                0 0 12px rgba(255, 230, 0, 0.7),
+                0 0 40px rgba(255, 50, 50, 0.35),
+                2px 2px 0 #ff2d55,
+                -2px -2px 0 #00e5ff;
+            background: linear-gradient(135deg, #ffe600, #ff6b35);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            transform: skew(-2deg) scale(1);
+            transition: transform 0.2s ease;
+            cursor: default;
+        }
+
+        .trick-message h1:hover {
+            transform: skew(-2deg) scale(1.04);
+        }
+
+        /* 副标题 / 小彩蛋 */
+        .sub-trick {
+            margin-top: 6px;
+            font-size: clamp(0.9rem, 2.2vw, 1.2rem);
+            color: rgba(255, 255, 255, 0.45);
+            letter-spacing: 2px;
+            font-weight: 300;
+        }
+
+        .sub-trick span {
+            color: #ff8888;
+            font-weight: 500;
+        }
+
+        /* 返回链接 — 保持原风格 */
+        .back-link {
+            margin-top: 28px;
+        }
+
+        .back-link a {
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            font-size: 1rem;
+            padding: 8px 22px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 60px;
+            backdrop-filter: blur(4px);
+            background: rgba(255, 255, 255, 0.04);
+            transition: all 0.25s ease;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        .back-link a:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 215, 0, 0.4);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.08);
+        }
+
+        /* 微闪动动画 — 增加“被骗了”的戏谑感 */
+        @keyframes glitch-pulse {
+            0% {
+                filter: drop-shadow(0 0 2px #ff0) brightness(1);
+            }
+            50% {
+                filter: drop-shadow(0 0 14px #f44) brightness(1.08);
+            }
+            100% {
+                filter: drop-shadow(0 0 2px #ff0) brightness(1);
+            }
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 640px) {
+            .video-wrapper {
+                width: 98vw;
+                border-radius: 8px;
+            }
+            .trick-message h1 {
+                letter-spacing: 3px;
+            }
+            .back-link a {
+                padding: 6px 18px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
 <body>
-<h1>你被骗了!</h1>
-    <a href="index.html">
-        <h2>返回</h2>
-    </a>
+
+    <!-- ===== 视频区域 ===== -->
+    <div class="video-wrapper">
+        <iframe
+    src="https://player.bilibili.com/player.html?&aid=80433022&bvid=BV1GJ411x7h7&cid=137649199&page=1&high_quality=1&danmaku=1&as_wide=1"
+    scrolling="no"
+    border="0"
+    frameborder="no"
+    framespacing="0"
+    allowfullscreen="true"
+    style="position:absolute;top:0;left:0;width:80%;height:80%;">
+    </iframe>
+</div>
+
+<!-- ===== “你被骗了！” 写在视频下方 ===== -->
+<div class="trick-message">
+    <h1>你被骗了！</h1>
+    <div class="sub-trick">
+        🎯 经典永不过时 · <span>Never Gonna Give You Up</span>
+    </div>
+</div>
+
+<!-- ===== 返回链接 ===== -->
+<div class="back-link">
+    <a href="index.html">← 返 回</a>
+</div>
+
 </body>
 </html>
