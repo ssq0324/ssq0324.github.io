@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>洛天依 · 天依蓝简介</title>
+<style>
+  :root{
+    --tianyi:#66ccff;          /* 天依蓝主色 */
+    --tianyi-deep:#2b8fd6;
+    --tianyi-light:#aee4ff;
+    --mint:#7ff0d6;
+    --ink:#0c2233;
+    --paper:#ffffff;
+    --gray-hair:#dfe7ee;
+    --green-eye:#7ee0a8;
+    --shadow:0 18px 50px rgba(40,130,200,.18);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:"PingFang SC","Microsoft YaHei",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(102,204,255,.35), transparent 60%),
+      radial-gradient(900px 500px at -10% 10%, rgba(127,240,214,.25), transparent 55%),
+      linear-gradient(180deg,#eaf7ff 0%, #f7fbff 40%, #ffffff 100%);
+    min-height:100vh;
+    line-height:1.7;
+  }
+  a{color:var(--tianyi-deep);text-decoration:none}
+
+  /* 顶部 */
+  header.hero{
+    position:relative;
+    overflow:hidden;
+    padding:72px 20px 60px;
+    text-align:center;
+    background:
+      radial-gradient(800px 300px at 50% -40%, rgba(255,255,255,.6), transparent 70%),
+      linear-gradient(135deg,var(--tianyi) 0%, #4aa8e8 45%, #2b6fc6 100%);
+    color:#fff;
+  }
+  header.hero::after{
+    content:"";position:absolute;inset:0;
+    background:
+      radial-gradient(420px 220px at 12% 20%, rgba(255,255,255,.25), transparent 60%),
+      radial-gradient(520px 260px at 88% 30%, rgba(127,240,214,.30), transparent 60%);
+    pointer-events:none;
+  }
+  .hero-badge{
+    display:inline-block;font-size:13px;letter-spacing:2px;
+    padding:6px 14px;border-radius:999px;
+    background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);
+    backdrop-filter:blur(4px);margin-bottom:18px;
+  }
+  .hero h1{
+    font-size:clamp(34px,7vw,68px);letter-spacing:4px;
+    text-shadow:0 8px 30px rgba(0,40,80,.25);
+  }
+  .hero h1 small{display:block;font-size:.32em;letter-spacing:6px;opacity:.9;margin-top:8px;font-weight:400}
+  .hero p.sub{max-width:760px;margin:18px auto 0;opacity:.95;font-size:clamp(14px,2.4vw,17px)}
+
+  /* 布局 */
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+  section{padding:54px 0}
+  .sec-title{
+    display:flex;align-items:center;gap:12px;margin-bottom:26px;
+    font-size:clamp(22px,4vw,30px);color:var(--ink);
+  }
+  .sec-title::before{
+    content:"";width:8px;height:26px;border-radius:6px;
+    background:linear-gradient(180deg,var(--tianyi),var(--tianyi-deep));
+    box-shadow:0 6px 16px rgba(102,204,255,.5);
+  }
+
+  /* 资料卡 */
+  .profile{
+    display:grid;grid-template-columns:280px 1fr;gap:28px;align-items:stretch;
+  }
+  .avatar{
+    border-radius:24px;overflow:hidden;min-height:340px;
+    background:linear-gradient(160deg,var(--tianyi-light),#dff6ff 60%, #ffffff);
+    border:1px solid rgba(102,204,255,.35);
+    box-shadow:var(--shadow);
+    position:relative;display:flex;align-items:center;justify-content:center;
+    color:#3a7ca8;font-size:14px;text-align:center;padding:18px;
+  }
+  .avatar img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+  .info{
+    background:var(--paper);border-radius:24px;padding:26px 26px;
+    box-shadow:var(--shadow);border:1px solid rgba(102,204,255,.18);
+  }
+  .info h3{font-size:20px;margin-bottom:10px;color:var(--tianyi-deep)}
+  .tags{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 6px}
+  .tag{
+    font-size:13px;padding:6px 12px;border-radius:999px;
+    background:linear-gradient(135deg,var(--tianyi-light),#eafff8);
+    color:#0c5b86;border:1px solid rgba(102,204,255,.35);
+  }
+  .meta{display:grid;grid-template-columns:repeat(2,1fr);gap:12px 22px;margin-top:14px}
+  .meta div span{display:block;font-size:12px;color:#7a93a3}
+  .meta div b{font-size:15px;color:var(--ink)}
+
+  /* 时间线 */
+  .timeline{display:grid;gap:16px}
+  .tl{
+    display:grid;grid-template-columns:120px 1fr;gap:18px;align-items:center;
+    background:var(--paper);border:1px solid rgba(102,204,255,.2);
+    border-radius:18px;padding:16px 20px;box-shadow:0 10px 30px rgba(40,130,200,.08);
+  }
+  .tl .date{font-weight:700;color:var(--tianyi-deep);font-size:15px}
+  .tl h4{font-size:16px;margin-bottom:4px}
+  .tl p{font-size:14px;color:#5b7282}
+
+  /* 代表作 */
+  .works{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px}
+  .work{
+    background:var(--paper);border-radius:20px;padding:20px;
+    border:1px solid rgba(102,204,255,.2);box-shadow:0 12px 30px rgba(40,130,200,.10);
+    transition:transform .25s ease, box-shadow .25s ease;
+  }
+  .work:hover{transform:translateY(-6px);box-shadow:0 22px 44px rgba(40,130,200,.18)}
+  .work .dot{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,var(--tianyi),var(--mint));color:#fff;font-weight:700;margin-bottom:12px}
+  .work h4{font-size:16px;margin-bottom:6px}
+  .work p{font-size:13px;color:#62798a}
+
+  /* 配色条 */
+  .palette{display:flex;flex-wrap:wrap;gap:14px;margin-top:8px}
+  .sw{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid rgba(102,204,255,.2);
+    padding:10px 14px;border-radius:14px;box-shadow:0 8px 20px rgba(40,130,200,.08)}
+  .sw i{width:26px;height:26px;border-radius:8px;display:inline-block}
+
+  footer{text-align:center;padding:36px 20px 48px;color:#7a93a3;font-size:13px}
+  footer b{color:var(--tianyi-deep)}
+
+  @media(max-width:720px){
+    .profile{grid-template-columns:1fr}
+    .avatar{min-height:260px}
+    .meta{grid-template-columns:1fr}
+    .tl{grid-template-columns:90px 1fr;gap:12px}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-badge">Vsinger · 中文虚拟歌姬 · 天依蓝 #66CCFF</div>
+  <h1>洛天依<small>LUO TIANYI · 世界第一的吃货殿下</small></h1>
+  <p class="sub">2012 年出道的首位中文 VOCALOID 虚拟歌手，灰发绿瞳、环形辫、天依蓝长裙；用歌声读取人心里的“那首歌”，温柔又倔强。</p>
+</header>
+
+<div class="wrap">
+
+  <!-- 资料 -->
+  <section>
+    <div class="sec-title">角色资料</div>
+    <div class="profile">
+      <div class="avatar">
+        <!-- 把下面 src 换成你的天依立绘/头像即可 -->
+        <img alt="洛天依" src="https://placehold.co/560x720/aee4ff/0c5b86?text=洛天依+立绘" />
+        <span style="position:relative;z-index:1">若无图会显示占位，替换 &lt;img src&gt; 即可</span>
+      </div>
+      <div class="info">
+        <h3>关于天依</h3>
+        <p>洛天依是上海禾念 / Vsinger 旗下的虚拟女性歌手，基于雅马哈 VOCALOID 引擎制作，软件演唱语言为中文。设定为来自异世界、通过歌声与人类共鸣的 15 岁少女，性格温柔敏感、天然呆又坚韧，代表色为天依蓝。</p>
+        <div class="tags">
+          <span class="tag">天依蓝 #66CCFF</span>
+          <span class="tag">灰发绿瞳</span>
+          <span class="tag">环形辫</span>
+          <span class="tag">音之精灵·天钿</span>
+          <span class="tag">声源·山新</span>
+          <span class="tag">锦依卫</span>
+        </div>
+        <div class="meta">
+          <div><span>生日</span><b>7 月 12 日（2012 出道）</b></div>
+          <div><span>身高 / 年龄</span><b>156 cm / 15 岁</b></div>
+          <div><span>人设</span><b>ideolo（V3）、TID（V4/V5）等</b></div>
+          <div><span>声库</span><b>V3 / V4 中·日 / V5 / ACE AI</b></div>
+          <div><span>擅长音域</span><b>约 A2–D4（萌/原声）</b></div>
+          <div><span>擅长节奏</span><b>80–170 BPM</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 时间线 -->
+  <section>
+    <div class="sec-title">成长时间线</div>
+    <div class="timeline">
+      <div class="tl">
+        <div class="date">2012.07</div>
+        <div>
+          <h4>VOCALOID 3 中文声库出道</h4>
+          <p>7 月 12 日发布，成为首款中文 VOCALOID 声库，形象由 ideolo 在“雅音宫羽”初稿基础上重绘定稿。[1,9](@ref)</p>
+        </div>
+      </div>
+      <div class="tl">
+        <div class="date">2017.12</div>
+        <div>
+          <h4>V4 中文声库发售</h4>
+          <p>分为“萌/Normal”与“凝/Power”等音色，后续舞台与同人创作大规模出圈。[9](@ref)</p>
+        </div>
+      </div>
+      <div class="tl">
+        <div class="date">2018.05</div>
+        <div>
+          <h4>V4 日文声库发售</h4>
+          <p>中文声源山新，日文声库加入鹿乃合作声线，拓展跨语种演唱。[1,9](@ref)</p>
+        </div>
+      </div>
+      <div class="tl">
+        <div class="date">2022.10</div>
+        <div>
+          <h4>V5 声库发售</h4>
+          <p>新增“婉/Nature”等情感化音色；同年 ACE AI 声库推进，进入神经网络合成时代。[9,2](@ref)</p>
+        </div>
+      </div>
+      <div class="tl">
+        <div class="date">2021→今</div>
+        <div>
+          <h4>春晚、跨年与全息演唱会</h4>
+          <p>登陆央视春晚、B 站跨年等舞台，长期举办全息/线下演出，虚拟歌姬破圈。[4,9](@ref)</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 代表作 -->
+  <section>
+    <div class="sec-title">常见代表作</div>
+    <div class="works">
+      <div class="work"><div class="dot">喵</div><h4>人是猫</h4><a href="https://www.bilibili.com/video/BV1Bfjq6LEDi/"></a></div>
+      <div class="work"><div class="dot">达</div><h4>达拉崩吧</h4><p>叙事魔性快嘴，天依“高速咬字”名场面。</p></div>
+      <div class="work"><div class="dot">千</div><h4>千年食谱颂</h4><p>美食吃货向，贴合“吃货殿下”人设。[4](@ref)</p></div>
+      <div class="work"><div class="dot">万</div><h4>万古生香</h4><p>国风抒情，展现天依清亮共鸣感。[6](@ref)</p></div>
+      <div class="work"><div class="dot">权</div><h4>权御天下</h4><p>古风燃曲，常与 Vsinger 同门同台。[10](@ref)</p></div>
+      <div class="work"><div class="dot">夜</div><h4>夜航星 / 其它 V5 曲</h4><p>跨年与晚会展演常用，偏情感与史诗感。[9](@ref)</p></div>
+    </div>
+  </section>
+
+  <!-- 配色 -->
+  <section>
+    <div class="sec-title">页面配色（天依蓝体系）</div>
+    <div class="palette">
+      <div class="sw"><i style="background:#66ccff"></i> 天依蓝 #66CCFF</div>
+      <div class="sw"><i style="background:#aee4ff"></i> 浅天依 #AEE4FF</div>
+      <div class="sw"><i style="background:#2b8fd6"></i> 深天依 #2B8FD6</div>
+      <div class="sw"><i style="background:#7ff0d6"></i> 薄荷点缀 #7FF0D6</div>
+      <div class="sw"><i style="background:#dfe7ee"></i> 灰发 #DFE7EE</div>
+      <div class="sw"><i style="background:#7ee0a8"></i> 绿瞳 #7EE0A8</div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  洛天依简介 Demo · 配色以<b>天依蓝 #66CCFF</b>为主，立绘请替换正版授权图片；资料供粉丝页/作业/展示使用。
+</footer>
+
+</body>
+</html>
