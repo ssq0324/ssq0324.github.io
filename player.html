@@ -17,37 +17,64 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 0;
         }
         .player-container {
             background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             width: 100%;
-            max-width: 400px;
-            padding: 30px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
-        h2 {
+        .main-title {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
             text-align: center;
+            padding: 15px 10px;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .left-panel {
+            order: 2; /* 竖屏时在下面 */
+            padding: 20px;
+            background: #fff;
+            border-top: 1px solid #eee;
+            flex-shrink: 0;
+        }
+        .right-panel {
+            order: 1; /* 竖屏时在上面 */
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background: #f9f9f9;
+        }
+        .playlist-title {
+            font-size: 16px;
             color: #333;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
         }
         .song-info {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
         }
         .song-name {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             color: #333;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .artist-name {
-            font-size: 14px;
+            font-size: 12px;
             color: #888;
         }
         .progress-container {
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         .progress-bar {
             width: 100%;
@@ -67,25 +94,25 @@
         .time {
             display: flex;
             justify-content: space-between;
-            font-size: 12px;
+            font-size: 11px;
             color: #888;
-            margin-top: 5px;
+            margin-top: 4px;
         }
         .controls {
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 20px;
-            margin: 25px 0;
+            margin: 15px 0;
         }
         .btn {
             border: none;
             background: none;
             cursor: pointer;
-            font-size: 24px;
+            font-size: 22px;
             color: #555;
             transition: all 0.3s;
-            padding: 10px;
+            padding: 8px;
             border-radius: 50%;
         }
         .btn:hover {
@@ -93,11 +120,11 @@
             background: rgba(102, 126, 234, 0.1);
         }
         .btn-play {
-            font-size: 36px;
+            font-size: 32px;
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-            width: 60px;
-            height: 60px;
+            width: 55px;
+            height: 55px;
             border-radius: 50%;
             display: flex;
             justify-content: center;
@@ -111,16 +138,17 @@
         .mode-controls {
             display: flex;
             justify-content: center;
-            gap: 15px;
-            margin-bottom: 20px;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
         }
         .mode-btn {
             border: 2px solid #ddd;
             background: white;
-            padding: 8px 15px;
+            padding: 6px 12px;
             border-radius: 20px;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 12px;
             transition: all 0.3s;
             color: #555;
         }
@@ -131,59 +159,53 @@
         }
         .timer-section {
             border-top: 1px solid #eee;
-            padding-top: 20px;
+            padding-top: 15px;
             text-align: center;
         }
         .timer-section label {
-            font-size: 14px;
+            font-size: 13px;
             color: #555;
         }
         .timer-select {
-            margin-left: 10px;
-            padding: 5px 10px;
+            margin-left: 8px;
+            padding: 4px 8px;
             border-radius: 5px;
             border: 1px solid #ddd;
-            font-size: 14px;
+            font-size: 13px;
         }
         .timer-btn {
-            margin-left: 10px;
-            padding: 6px 15px;
+            margin-left: 8px;
+            padding: 5px 12px;
             border: none;
             background: #667eea;
             color: white;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
         }
         .timer-btn:hover {
             background: #5a67d8;
         }
-        .timer-btn.cancel {
-            background: #e53e3e;
-        }
-        .timer-btn.cancel:hover {
-            background: #c53030;
-        }
         .timer-display {
-            font-size: 13px;
+            font-size: 12px;
             color: #888;
-            margin-top: 10px;
-            min-height: 20px;
+            margin-top: 8px;
+            min-height: 18px;
         }
         .playlist {
-            margin-top: 20px;
-            max-height: 150px;
-            overflow-y: auto;
-            border-top: 1px solid #eee;
-            padding-top: 10px;
+            max-height: none;
+            overflow-y: visible;
         }
         .playlist-item {
             padding: 10px;
             cursor: pointer;
             border-radius: 8px;
             transition: background 0.2s;
-            font-size: 14px;
+            font-size: 13px;
             color: #555;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .playlist-item:hover {
             background: rgba(102, 126, 234, 0.1);
@@ -193,60 +215,114 @@
             color: #667eea;
             font-weight: bold;
         }
+
+        /* ========== 横屏/宽屏布局 ========== */
+        @media (orientation: landscape) {
+            body {
+                padding: 20px;
+            }
+            .player-container {
+                max-width: 950px;
+                height: 85vh;
+                border-radius: 20px;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            .main-title {
+                width: 100%;
+                font-size: 20px;
+                padding: 15px;
+                border-radius: 20px 20px 0 0;
+            }
+            .left-panel {
+                order: 1;
+                width: 380px;
+                height: calc(85vh - 60px);
+                border-top: none;
+                border-right: 1px solid #eee;
+                overflow-y: auto;
+            }
+            .right-panel {
+                order: 2;
+                width: calc(100% - 380px);
+                height: calc(85vh - 60px);
+            }
+        }
+
+        /* 针对大屏幕进一步优化 */
+        @media (min-width: 768px) and (orientation: portrait) {
+            .player-container {
+                height: 95vh;
+                margin: 2.5vh auto;
+                border-radius: 20px;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            }
+            .main-title {
+                border-radius: 20px 20px 0 0;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="player-container">
-        <h2>🎵 在线音乐播放器</h2>
+        <h2 class="main-title">🎵 在线音乐播放器</h2>
         
-        <div class="song-info">
-            <div class="song-name" id="songName">选择一首歌曲</div>
-            <div class="artist-name" id="artistName">未知艺术家</div>
-        </div>
-
-        <div class="progress-container">
-            <div class="progress-bar" id="progressBar">
-                <div class="progress" id="progress"></div>
+        <!-- 左侧/底部：控制面板 -->
+        <div class="left-panel">
+            <div class="song-info">
+                <div class="song-name" id="songName">选择一首歌曲</div>
+                <div class="artist-name" id="artistName">未知艺术家</div>
             </div>
-            <div class="time">
-                <span id="currentTime">0:00</span>
-                <span id="duration">0:00</span>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress" id="progress"></div>
+                </div>
+                <div class="time">
+                    <span id="currentTime">0:00</span>
+                    <span id="duration">0:00</span>
+                </div>
             </div>
+
+            <div class="controls">
+                <button class="btn" id="prevBtn" title="上一首">⏮</button>
+                <button class="btn btn-play" id="playBtn" title="播放/暂停">▶</button>
+                <button class="btn" id="nextBtn" title="下一首">⏭</button>
+            </div>
+
+            <div class="mode-controls">
+                <button class="mode-btn active" id="modeOrder" onclick="setMode('order')">📋 顺序播放</button>
+                <button class="mode-btn" id="modeRandom" onclick="setMode('random')">🔀 随机播放</button>
+                <button class="mode-btn" id="modeLoop" onclick="setMode('loop')">🔁 单曲循环</button>
+            </div>
+
+            <div class="timer-section">
+                <label>⏰ 定时关闭：</label>
+                <select class="timer-select" id="timerSelect">
+                    <option value="0">不开启</option>
+                    <option value="10">10分钟</option>
+                    <option value="20">20分钟</option>
+                    <option value="30">30分钟</option>
+                    <option value="60">60分钟</option>
+                    <option value="custom">自定义...</option>
+                </select>
+                <button class="timer-btn" id="timerBtn" onclick="setTimer()">确定</button>
+                <div class="timer-display" id="timerDisplay"></div>
+            </div>
+
+            <audio id="audio"></audio>
         </div>
 
-        <div class="controls">
-            <button class="btn" id="prevBtn" title="上一首">⏮</button>
-            <button class="btn btn-play" id="playBtn" title="播放/暂停">▶</button>
-            <button class="btn" id="nextBtn" title="下一首">⏭</button>
+        <!-- 右侧/顶部：播放列表 -->
+        <div class="right-panel">
+            <div class="playlist-title">🎶 播放列表（共 <span id="songCount"></span> 首）</div>
+            <div class="playlist" id="playlist"></div>
         </div>
-
-        <div class="mode-controls">
-            <button class="mode-btn active" id="modeOrder" onclick="setMode('order')">📋 顺序播放</button>
-            <button class="mode-btn" id="modeRandom" onclick="setMode('random')">🔀 随机播放</button>
-            <button class="mode-btn" id="modeLoop" onclick="setMode('loop')">🔁 单曲循环</button>
-        </div>
-
-        <div class="timer-section">
-            <label>⏰ 定时关闭：</label>
-            <select class="timer-select" id="timerSelect">
-                <option value="0">不开启</option>
-                <option value="10">10分钟</option>
-                <option value="20">20分钟</option>
-                <option value="30">30分钟</option>
-                <option value="60">60分钟</option>
-                <option value="custom">自定义...</option>
-            </select>
-            <button class="timer-btn" id="timerBtn" onclick="setTimer()">确定</button>
-            <div class="timer-display" id="timerDisplay"></div>
-        </div>
-
-        <div class="playlist" id="playlist"></div>
     </div>
 
-    <audio id="audio"></audio>
-
     <script>
-        // 音乐列表（你可以替换成自己的音乐URL）
+        // 音乐列表
         const songs = [
         { name: "“这歌有力气！”—《HandClap》-260724-p01-80.mp3", artist: "", url: "https://ssq0324.github.io/resources/music/“这歌有力气！”—《HandClap》-260724-p01-80.mp3" },
         { name: "《China-A》‖中国风电音第五弹，盛世中国集市熙攘，除夕盛典喜迎新年！！！-260724-p01-80.mp3", artist: "", url: "https://ssq0324.github.io/resources/music/《China-A》‖中国风电音第五弹，盛世中国集市熙攘，除夕盛典喜迎新年！！！-260724-p01-80.mp3" },
@@ -365,7 +441,7 @@
 
         let currentSongIndex = 0;
         let isPlaying = false;
-        let currentMode = 'order'; // order, random, loop
+        let currentMode = 'order';
         let timerId = null;
         let timerEndTime = null;
 
@@ -380,27 +456,25 @@
         const playlistEl = document.getElementById('playlist');
         const timerDisplay = document.getElementById('timerDisplay');
 
-        // 初始化播放列表
         function initPlaylist() {
             playlistEl.innerHTML = '';
             songs.forEach((song, index) => {
                 const div = document.createElement('div');
                 div.className = 'playlist-item';
-                div.innerHTML = `${index + 1}. ${song.name} - ${song.artist}`;
+                div.innerHTML = `${index + 1}. ${song.name}`;
                 div.onclick = () => loadSong(index);
                 playlistEl.appendChild(div);
             });
+            document.getElementById('songCount').textContent = songs.length;
         }
 
-        // 加载歌曲
         function loadSong(index) {
             currentSongIndex = index;
             const song = songs[index];
             audio.src = song.url;
             songNameEl.textContent = song.name;
-            artistNameEl.textContent = song.artist;
+            artistNameEl.textContent = song.artist || '未知艺术家';
             
-            // 更新播放列表高亮
             document.querySelectorAll('.playlist-item').forEach((item, i) => {
                 item.classList.toggle('playing', i === index);
             });
@@ -410,7 +484,6 @@
             }
         }
 
-        // 播放/暂停
         function togglePlay() {
             if (!audio.src) {
                 loadSong(0);
@@ -425,7 +498,6 @@
             isPlaying = !isPlaying;
         }
 
-        // 上一首
         function prevSong() {
             let index;
             if (currentMode === 'random') {
@@ -437,11 +509,9 @@
             if (isPlaying) audio.play();
         }
 
-        // 下一首
         function nextSong() {
             if (currentMode === 'random') {
                 let index = Math.floor(Math.random() * songs.length);
-                // 确保不重复当前
                 while (index === currentSongIndex && songs.length > 1) {
                     index = Math.floor(Math.random() * songs.length);
                 }
@@ -453,7 +523,6 @@
             if (isPlaying) audio.play();
         }
 
-        // 设置播放模式
         function setMode(mode) {
             currentMode = mode;
             audio.loop = (mode === 'loop');
@@ -464,7 +533,6 @@
             if (mode === 'loop') document.getElementById('modeLoop').classList.add('active');
         }
 
-        // 定时关闭
         function setTimer() {
             const select = document.getElementById('timerSelect');
             let minutes = parseInt(select.value);
@@ -479,7 +547,6 @@
                 return;
             }
             
-            // 清除之前的定时器
             clearTimer();
             
             const ms = minutes * 60 * 1000;
@@ -493,7 +560,6 @@
                 timerDisplay.textContent = '';
             }, ms);
             
-            // 显示倒计时
             updateTimerDisplay();
         }
 
@@ -522,7 +588,6 @@
             requestAnimationFrame(updateTimerDisplay);
         }
 
-        // 格式化时间
         function formatTime(seconds) {
             if (isNaN(seconds)) return '0:00';
             const m = Math.floor(seconds / 60);
@@ -530,7 +595,6 @@
             return `${m}:${s < 10 ? '0' + s : s}`;
         }
 
-        // 事件监听
         playBtn.addEventListener('click', togglePlay);
         document.getElementById('prevBtn').addEventListener('click', prevSong);
         document.getElementById('nextBtn').addEventListener('click', nextSong);
@@ -556,7 +620,6 @@
             audio.currentTime = percent * audio.duration;
         });
 
-        // 初始化
         initPlaylist();
         loadSong(0);
     </script>
