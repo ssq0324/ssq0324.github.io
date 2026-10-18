@@ -1,19 +1,4 @@
 <!doctype html>
-<script src="https://giscus.app/client.js"
-        data-repo="ssq0324/ssq0324.github.io"
-        data-repo-id="R_kgDOSefD-A"
-        data-category="Announcements"
-        data-category-id="DIC_kwDOSefD-M4DG3WR"
-        data-mapping="pathname"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="bottom"
-        data-theme="preferred_color_scheme"
-        data-lang="zh-CN"
-        crossorigin="anonymous"
-        async>
-</script>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
@@ -25,6 +10,7 @@
  .card{background:#fff;border-radius:12px;padding:12px 14px;margin:12px 0;box-shadow:0 1px 3px rgba(0,0,0,.08)}
  .meta{color:#888;font-size:12px;margin-top:6px}
  .photos img{width:100px;height:100px;object-fit:cover;border-radius:8px;margin:4px}
+ .giscus{margin-top:10px;border-top:1px solid #eee;padding-top:8px}
 </style>
 </head>
 <body>
@@ -32,49 +18,77 @@
 
 <div class="card">
   <div>蚌埠住了……</div>
-  <audio src="\resources\moments\202610180830-1青春行司风版1.mp3" controls></audio>
-  <audio src="\resources\moments\202610180830-2青春行司风版2.mp3" controls></audio>
+  <audio src="/resources/moments/202610180830-1青春行司风版1.mp3" controls></audio>
+  <audio src="/resources/moments/202610180830-2青春行司风版2.mp3" controls></audio>
   <div class="meta">2026-10-18 08:30</div>
-  <div class="giscus" data-term="moment-20261018083000"></div>
+  <div class="giscus" data-term="moment-202610180830"></div>
 </div>
 
 <div class="card">
   <div>蚌埠住了……</div>
-  <audio src="resources/moments/20261007120000-1青春行（冰）.mp3" controls></audio>
+  <audio src="/resources/moments/20261007120000-1青春行（冰）.mp3" controls></audio>
   <div class="meta">2026-10-07 12:00</div>
-  <div class="giscus" data-term="moment-20261007120000"></div>
+  <div class="giscus" data-term="moment-202610071200"></div>
 </div>
 
 <div class="card">
   <div>国庆快乐！</div>
   <div class="photos">
-   <a href="resources/moments/20261002141200-1.png" target="_blank">
-    <img src="resources/moments/20261002141200-1.png" 
-         onerror="this.onerror=null; this.src='resources/moments/失效.png';" 
-         alt="描述">
+   <a href="/resources/moments/20261002141200-1.png" target="_blank">
+    <img src="/resources/moments/20261002141200-1.png" 
+         onerror="this.onerror=null; this.src='/resources/moments/失效.png';" alt="描述">
    </a>
   </div>
   <div class="meta">2026-10-01 00:00</div>
-  <div class="giscus" data-term="moment-20261001000000"></div>
+  <div class="giscus" data-term="moment-202610010000"></div>
 </div>
+
 <div class="card">
-  <div>我CaO（氧化钙） your mother's B的ljl<br>
-​翻译:sbljl</div>
+  <div>我CaO（氧化钙） your mother's B的ljl<br>翻译:sbljl</div>
   <div class="photos">
-   <a href="resources/moments/20260919091708_1.jpg" target="_blank">
-    <img src="resources/moments/20260919091708_1.jpg" 
-         onerror="this.onerror=null; this.src='resources/moments/失效.png';" 
-         alt="描述">
+   <a href="/resources/moments/20260919091708_1.jpg" target="_blank">
+    <img src="/resources/moments/20260919091708_1.jpg" 
+         onerror="this.onerror=null; this.src='/resources/moments/失效.png';" alt="描述">
    </a>
   </div>
   <div class="meta">2026-09-19 09:17</div>
-  <div class="giscus" data-term="moment-20260919091700"></div>
+  <div class="giscus" data-term="moment-202609190917"></div>
 </div>
+
 <div class="card">
   <div>测试一下 GitHub Pages 发圈。</div>
   <div class="meta">2026-09-26 13:00</div>
-  <div class="giscus" data-term="moment-20260926130000"></div>
+  <div class="giscus" data-term="moment-202609261300"></div>
 </div>
+
+<!-- 只放一次，JS 给每个 .giscus 单独挂实例 -->
+<script>
+(function () {
+  const cfg = {
+    "data-repo": "ssq0324/ssq0324.github.io",
+    "data-repo-id": "R_kgDOSefD-A",
+    "data-category": "Announcements",
+    "data-category-id": "DIC_kwDOSefD-M4DG3WR",
+    "data-mapping": "specific",
+    "data-strict": "0",
+    "data-reactions-enabled": "1",
+    "data-emit-metadata": "0",
+    "data-input-position": "bottom",
+    "data-theme": "preferred_color_scheme",
+    "data-lang": "zh-CN"
+  };
+
+  document.querySelectorAll('.giscus').forEach(el => {
+    const s = document.createElement('script');
+    s.src = 'https://giscus.app/client.js';
+    s.async = true;
+    s.crossOrigin = 'anonymous';
+    Object.entries(cfg).forEach(([k, v]) => s.setAttribute(k, v));
+    s.setAttribute('data-term', el.dataset.term || location.pathname);
+    el.appendChild(s);
+  });
+})();
+</script>
 
 </body>
 </html>
