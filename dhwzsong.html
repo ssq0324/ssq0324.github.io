@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>校歌专版 · 青春行</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: #0a1628;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ========== 背景图片（可替换） ========== */
+        .bg-image {
+            position: fixed;
+            inset: 0;
+            z-index: -3;
+            background: #0c1e3a;
+            /* 👇 在这里替换背景图片 */
+            background-image: url('/resources/schoolsong/dhwz16：9.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        /* 背景遮罩层 */
+        .bg-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            background:
+                linear-gradient(to bottom, rgba(10,22,40,0.55) 0%, rgba(10,22,40,0.35) 40%, rgba(10,22,40,0.7) 100%);
+        }
+
+        .bg-overlay::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 70% 50% at 50% 0%, rgba(255,200,100,0.12) 0%, transparent 70%),
+                radial-gradient(ellipse 60% 40% at 80% 80%, rgba(100,180,255,0.08) 0%, transparent 70%);
+        }
+
+        /* 底部渐变收尾 */
+        .bg-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50vh;
+            z-index: -1;
+            background: linear-gradient(to top, rgba(10,22,40,0.95) 0%, rgba(10,22,40,0.6) 50%, transparent 100%);
+        }
+
+        /* ========== 主容器 ========== */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 36px 20px 100px;
+            position: relative;
+        }
+
+        /* ========== 顶部标题 ========== */
+        .hero {
+            text-align: center;
+            padding: 30px 16px 24px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255,215,0,0.15);
+            border: 1px solid rgba(255,215,0,0.35);
+            border-radius: 30px;
+            padding: 6px 22px;
+            font-size: 12px;
+            letter-spacing: 3px;
+            color: #ffd700;
+            margin-bottom: 16px;
+            backdrop-filter: blur(6px);
+        }
+
+        .school-name {
+            font-size: 14px;
+            color: rgba(255,255,255,0.75);
+            letter-spacing: 5px;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+        }
+
+        .song-title {
+            font-size: clamp(44px, 13vw, 72px);
+            font-weight: 900;
+            background: linear-gradient(135deg, #ffd700 0%, #ffa94d 40%, #ff7a59 70%, #ffd700 100%);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 5s ease infinite;
+            letter-spacing: 10px;
+            filter: drop-shadow(0 0 24px rgba(255,200,50,0.25));
+        }
+
+        @keyframes shimmer {
+            0%,100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .song-subtitle {
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+            margin-top: 10px;
+            letter-spacing: 3px;
+        }
+
+        /* ========== 分类版块 ========== */
+        .category-section {
+            margin-bottom: 36px;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-left: 4px;
+        }
+
+        .category-icon {
+            font-size: 24px;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .category-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+
+        .category-desc {
+            font-size: 12px;
+            color: rgba(255,255,255,0.45);
+            margin-top: 2px;
+        }
+
+        /* ========== 音频卡片 ========== */
+        .audio-card {
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 20px 22px;
+            margin-bottom: 12px;
+            transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+        }
+
+        .audio-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 36px rgba(0,0,0,0.25);
+            border-color: rgba(255,215,0,0.25);
+        }
+
+        .audio-card.playing {
+            border-color: rgba(255,215,0,0.45);
+            box-shadow: 0 0 24px rgba(255,215,0,0.1);
+        }
+
+        .audio-top {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .audio-cover {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,140,66,0.12));
+            border: 1px solid rgba(255,215,0,0.2);
+        }
+
+        .audio-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .audio-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .audio-meta {
+            font-size: 12px;
+            color: rgba(255,255,255,0.45);
+        }
+
+        /* 播放按钮 */
+        .play-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,215,0,0.5);
+            background: linear-gradient(135deg, rgba(255,215,0,0.18), rgba(255,140,66,0.12));
+            color: #ffd700;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.25s;
+        }
+
+        .play-btn:hover {
+            background: linear-gradient(135deg, rgba(255,215,0,0.3), rgba(255,140,66,0.2));
+            transform: scale(1.06);
+            box-shadow: 0 0 16px rgba(255,215,0,0.25);
+        }
+
+        .play-btn .icon-play::before { content: '▶'; }
+        .play-btn .icon-pause::before { content: '⏸'; }
+
+        /* 进度条 */
+        .progress-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 4px;
+            background: rgba(255,255,255,0.12);
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+            overflow: visible;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ffd700, #ff8c42);
+            border-radius: 2px;
+            transition: width 0.1s linear;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            right: -4px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ffd700;
+            box-shadow: 0 0 6px rgba(255,215,0,0.5);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .progress-bar:hover .progress-fill::after { opacity: 1; }
+
+        .time-text {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+            min-width: 36px;
+            text-align: center;
+        }
+
+        /* 波形动画 */
+        .wave-bars {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            height: 22px;
+            margin-left: 10px;
+        }
+
+        .wave-bars .wb {
+            width: 3px;
+            border-radius: 2px;
+            background: linear-gradient(to top, #ffd700, #ff8c42);
+            animation: waveAnim 1s ease-in-out infinite alternate;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .wave-bars .wb:nth-child(1) { height: 30%; animation-delay: 0s; }
+        .wave-bars .wb:nth-child(2) { height: 60%; animation-delay: 0.15s; }
+        .wave-bars .wb:nth-child(3) { height: 100%; animation-delay: 0.3s; }
+        .wave-bars .wb:nth-child(4) { height: 50%; animation-delay: 0.45s; }
+        .wave-bars .wb:nth-child(5) { height: 80%; animation-delay: 0.6s; }
+
+        @keyframes waveAnim {
+            0% { transform: scaleY(0.3); }
+            100% { transform: scaleY(1); }
+        }
+
+        .audio-card.playing .wave-bars .wb { opacity: 0.8; }
+
+        /* 隐藏的audio元素 */
+        .audio-card audio { display: none; }
+
+        /* ========== 页脚 ========== */
+        .footer {
+            text-align: center;
+            padding: 36px 20px 20px;
+            color: rgba(255,255,255,0.3);
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        .footer .divider {
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255,215,0,0.4), transparent);
+            margin: 0 auto 14px;
+        }
+
+        /* ========== 横屏适配 ========== */
+        @media (orientation: landscape) and (max-height: 480px) {
+            .container { padding: 16px 20px 60px; }
+            .hero { padding: 12px 16px 14px; }
+            .song-title { font-size: clamp(32px, 6vw, 48px); }
+            .category-section { margin-bottom: 16px; }
+            .category-header { margin-bottom: 10px; }
+            .audio-card { padding: 14px 18px; margin-bottom: 8px; }
+            .audio-cover { width: 40px; height: 40px; font-size: 18px; }
+            .cards-row {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 10px;
+            }
+            .cards-row .audio-card { margin-bottom: 0; }
+        }
+
+        @media (orientation: portrait) and (min-width: 600px) {
+            .container { padding: 44px 32px 100px; }
+        }
+
+        /* ========== 入场动画 ========== */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero { animation: fadeInUp 0.7s ease forwards; }
+        .category-section { animation: fadeInUp 0.7s ease forwards; }
+        .category-section:nth-of-type(1) { animation-delay: 0.08s; }
+        .category-section:nth-of-type(2) { animation-delay: 0.16s; }
+        .category-section:nth-of-type(3) { animation-delay: 0.24s; }
+        .category-section:nth-of-type(4) { animation-delay: 0.32s; }
+    </style>
+</head>
+<body>
+
+<!-- 背景图片（替换 bg-image.jpg 即可更换底图） -->
+<div class="bg-image"></div>
+<div class="bg-overlay"></div>
+<div class="bg-bottom"></div>
+
+<div class="container">
+
+    <!-- 顶部标题 -->
+    <div class="hero">
+        <div class="hero-badge">SCHOOL ANTHEM</div>
+        <div class="school-name">舟山市定海区第五中学</div>
+        <h1 class="song-title">青春行</h1>
+        <p class="song-subtitle">博乐实新</p>
+    </div>
+
+    <!-- ===== 分类1：合唱版 ===== -->
+    <div class="category-section">
+        <div class="category-header">
+            <div class="category-icon">🎤</div>
+            <div>
+                <div class="category-title">合唱版</div>
+                <div class="category-desc">全校师生共同演绎</div>
+            </div>
+        </div>
+
+        <!-- 音频卡片1 -->
+        <div class="audio-card" data-audio="1">
+            <div class="audio-top">
+                <div class="audio-cover">🎵</div>
+                <div class="audio-info">
+                    <div class="audio-name">青春行 · 全校大合唱</div>
+                    <div class="audio-meta">合唱团 · 3:02</div>
+                </div>
+                <button class="play-btn" data-play="1">
+                    <span class="icon-play"></span>
+                </button>
+                <div class="wave-bars">
+                    <div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div>
+                </div>
+            </div>
+            <div class="progress-wrap">
+                <span class="time-text" data-current="1">00:00</span>
+                <div class="progress-bar" data-bar="1">
+                    <div class="progress-fill" data-fill="1"></div>
+                </div>
+                <span class="time-text" data-duration="1">03:02</span>
+            </div>
+            <audio data-audio-el="1" preload="metadata">
+                <source src="/resources/schoolsong/青春行--定海五中校歌.mp3" type="audio/mpeg">
+            </audio>
+        </div>
+
+    <!-- ===== 分类2：伴奏版 ===== -->
+    <div class="category-section">
+        <div class="category-header">
+            <div class="category-icon">🎹</div>
+            <div>
+                <div class="category-title">伴奏版</div>
+                <div class="category-desc">（非官方手动去人声）</div>
+            </div>
+        </div>
+
+        <div class="audio-card" data-audio="4">
+            <div class="audio-top">
+                <div class="audio-cover">🎹</div>
+                <div class="audio-info">
+                    <div class="audio-name">青春行 · 伴奏</div>
+                    <div class="audio-meta">钢琴独奏 · 3:02</div>
+                </div>
+                <button class="play-btn" data-play="4">
+                    <span class="icon-play"></span>
+                </button>
+                <div class="wave-bars">
+                    <div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div>
+                </div>
+            </div>
+            <div class="progress-wrap">
+                <span class="time-text" data-current="4">00:00</span>
+                <div class="progress-bar" data-bar="4">
+                    <div class="progress-fill" data-fill="4"></div>
+                </div>
+                <span class="time-text" data-duration="4">03:02</span>
+            </div>
+            <audio data-audio-el="4" preload="metadata">
+                <source src="/resources/schoolsong/青春行--定海五中校歌(消音伴奏).mp3" type="audio/mpeg">
+            </audio>
+        </div>
+
+    <!-- ===== 分类3：改编版 ===== -->
+    <div class="category-section">
+        <div class="category-header">
+            <div class="category-icon">🎧</div>
+            <div>
+                <div class="category-title">改编版</div>
+                <div class="category-desc">鬼畜改编</div>
+            </div>
+        </div>
+
+        <div class="audio-card" data-audio="7">
+            <div class="audio-top">
+                <div class="audio-cover">🎧</div>
+                <div class="audio-info">
+                    <div class="audio-name">青春行（但是冰冰冰演唱）</div>
+                    <div class="audio-meta">ssq制作 · 3:02</div>
+                </div>
+                <button class="play-btn" data-play="7">
+                    <span class="icon-play"></span>
+                </button>
+                <div class="wave-bars">
+                    <div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div>
+                </div>
+            </div>
+            <div class="progress-wrap">
+                <span class="time-text" data-current="7">00:00</span>
+                <div class="progress-bar" data-bar="7">
+                    <div class="progress-fill" data-fill="7"></div>
+                </div>
+                <span class="time-text" data-duration="7">03:02</span>
+            </div>
+            <audio data-audio-el="7" preload="metadata">
+                <source src="/resources/schoolsong/青春行（冰）.mp3" type="audio/mpeg">
+            </audio>
+        </div>
+
+        <div class="audio-card" data-audio="8">
+            <div class="audio-top">
+                <div class="audio-cover">🎧</div>
+                <div class="audio-info">
+                    <div class="audio-name">青春行（但是洛天依演唱）</div>
+                    <div class="audio-meta">可能部分音对的不齐 · 3:02</div>
+                </div>
+                <button class="play-btn" data-play="8">
+                    <span class="icon-play"></span>
+                </button>
+                <div class="wave-bars">
+                    <div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div>
+                </div>
+            </div>
+            <div class="progress-wrap">
+                <span class="time-text" data-current="8">00:00</span>
+                <div class="progress-bar" data-bar="8">
+                    <div class="progress-fill" data-fill="8"></div>
+                </div>
+                <span class="time-text" data-duration="8">03:02</span>
+            </div>
+            <audio data-audio-el="8" preload="metadata">
+                <source src="/resources/schoolsong/青春行洛天依版.mp3" type="audio/mpeg">
+            </audio>
+        </div>
+    </div>
+
+    <div class="audio-card" data-audio="8">
+        <div class="audio-top">
+            <div class="audio-cover">🎧</div>
+            <div class="audio-info">
+                <div class="audio-name">青春行（但是司凤版1）</div>
+                <div class="audio-meta">AI制作 · 3:11</div>
+            </div>
+            <button class="play-btn" data-play="8">
+                <span class="icon-play"></span>
+            </button>
+            <div class="wave-bars">
+                <div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div>
+            </div>
+        </div>
+        <div class="progress-wrap">
+            <span class="time-text" data-current="8">00:00</span>
+            <div class="progress-bar" data-bar="8">
+                <div class="progress-fill" data-fill="8"></div>
+            </div>
+            <span class="time-text" data-duration="8">03:11</span>
+        </div>
+        <audio data-audio-el="8" preload="metadata">
+            <source src="/resources/schoolsong/青春行司风版1.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <div class="audio-card" data-audio="8">
+        <div class="audio-top">
+            <div class="audio-cover">🎧</div>
+            <div class="audio-info">
+                <div class="audio-name">青春行（但是司凤版2）</div>
+                <div class="audio-meta">AI制作 · 3:23</div>
+            </div>
+            <button class="play-btn" data-play="8">
+                <span class="icon-play"></span>
+            </button>
+            <div class="wave-bars">
+                <div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div>
+            </div>
+        </div>
+        <div class="progress-wrap">
+            <span class="time-text" data-current="8">00:00</span>
+            <div class="progress-bar" data-bar="8">
+                <div class="progress-fill" data-fill="8"></div>
+            </div>
+            <span class="time-text" data-duration="8">03:23</span>
+        </div>
+        <audio data-audio-el="8" preload="metadata">
+            <source src="/resources/schoolsong/青春行司风版2.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+
+    <!-- 页脚 -->
+    <div class="footer">
+        <div class="divider"></div>
+        <p>舟山市定海区第五中学 · 校歌《青春行》</p>
+        <p style="margin-top:6px; opacity:0.7;">青春无悔 · 逐梦前行 · 共创辉煌</p>
+    </div>
+
+</div>
+
+<script>
+// ========== 音频播放管理 ==========
+const audios = {}; // 存储所有音频元素
+
+document.querySelectorAll('audio[data-audio-el]').forEach(el => {
+    const id = el.dataset.audioEl;
+    audios[id] = el;
+
+    const card = document.querySelector(`.audio-card[data-audio="${id}"]`);
+    const playBtn = document.querySelector(`[data-play="${id}"]`);
+    const fill = document.querySelector(`[data-fill="${id}"]`);
+    const bar = document.querySelector(`[data-bar="${id}"]`);
+    const currentTimeEl = document.querySelector(`[data-current="${id}"]`);
+    const durationEl = document.querySelector(`[data-duration="${id}"]`);
+
+    function formatTime(s) {
+        if (isNaN(s)) return '00:00';
+        const m = Math.floor(s / 60);
+        const sec = Math.floor(s % 60);
+        return String(m).padStart(2,'0') + ':' + String(sec).padStart(2,'0');
+    }
+
+    // 时长加载
+    el.addEventListener('loadedmetadata', () => {
+        durationEl.textContent = formatTime(el.duration);
+    });
+
+    // 更新进度
+    el.addEventListener('timeupdate', () => {
+        const percent = (el.currentTime / el.duration) * 100;
+        fill.style.width = percent + '%';
+        currentTimeEl.textContent = formatTime(el.currentTime);
+    });
+
+    // 播放结束
+    el.addEventListener('ended', () => {
+        playBtn.innerHTML = '<span class="icon-play"></span>';
+        card.classList.remove('playing');
+        fill.style.width = '0%';
+        currentTimeEl.textContent = '00:00';
+    });
+
+    // 点击进度条跳转
+    bar.addEventListener('click', (e) => {
+        const rect = bar.getBoundingClientRect();
+        const percent = (e.clientX - rect.left) / rect.width;
+        el.currentTime = percent * el.duration;
+    });
+
+    // 播放/暂停
+    playBtn.addEventListener('click', () => {
+        if (el.paused) {
+            // 暂停其他所有音频
+            Object.entries(audios).forEach(([otherId, otherEl]) => {
+                if (otherId !== id && !otherEl.paused) {
+                    otherEl.pause();
+                    const otherBtn = document.querySelector(`[data-play="${otherId}"]`);
+                    const otherCard = document.querySelector(`.audio-card[data-audio="${otherId}"]`);
+                    if (otherBtn) otherBtn.innerHTML = '<span class="icon-play"></span>';
+                    if (otherCard) otherCard.classList.remove('playing');
+                }
+            });
+            el.play();
+            playBtn.innerHTML = '<span class="icon-pause"></span>';
+            card.classList.add('playing');
+        } else {
+            el.pause();
+            playBtn.innerHTML = '<span class="icon-play"></span>';
+            card.classList.remove('playing');
+        }
+    });
+});
+</script>
+
+</body>
+</html>
