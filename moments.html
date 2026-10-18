@@ -10,7 +10,10 @@
  .card{background:#fff;border-radius:12px;padding:12px 14px;margin:12px 0;box-shadow:0 1px 3px rgba(0,0,0,.08)}
  .meta{color:#888;font-size:12px;margin-top:6px}
  .photos img{width:100px;height:100px;object-fit:cover;border-radius:8px;margin:4px}
- .giscus{margin-top:10px;border-top:1px solid #eee;padding-top:8px}
+ .comment-btn{margin-top:8px;border:1px solid #ddd;background:#fff;border-radius:18px;
+   padding:4px 12px;font-size:13px;cursor:pointer;color:#576b95}
+ .comment-btn:hover{background:#f2f2f2}
+ .giscus-box{margin-top:10px;border-top:1px solid #eee;padding-top:8px}
 </style>
 </head>
 <body>
@@ -21,14 +24,16 @@
   <audio src="/resources/moments/202610180830-1青春行司风版1.mp3" controls></audio>
   <audio src="/resources/moments/202610180830-2青春行司风版2.mp3" controls></audio>
   <div class="meta">2026-10-18 08:30</div>
-  <div class="giscus" data-term="moment-202610180830"></div>
+  <button class="comment-btn" data-term="moment-202610180830">💬 评论</button>
+  <div class="giscus-box"></div>
 </div>
 
 <div class="card">
   <div>蚌埠住了……</div>
   <audio src="/resources/moments/20261007120000-1青春行（冰）.mp3" controls></audio>
   <div class="meta">2026-10-07 12:00</div>
-  <div class="giscus" data-term="moment-202610071200"></div>
+  <button class="comment-btn" data-term="moment-202610071200">💬 评论</button>
+  <div class="giscus-box"></div>
 </div>
 
 <div class="card">
@@ -40,7 +45,8 @@
    </a>
   </div>
   <div class="meta">2026-10-01 00:00</div>
-  <div class="giscus" data-term="moment-202610010000"></div>
+  <button class="comment-btn" data-term="moment-202610010000">💬 评论</button>
+  <div class="giscus-box"></div>
 </div>
 
 <div class="card">
@@ -52,42 +58,53 @@
    </a>
   </div>
   <div class="meta">2026-09-19 09:17</div>
-  <div class="giscus" data-term="moment-202609190917"></div>
+  <button class="comment-btn" data-term="moment-202609190917">💬 评论</button>
+  <div class="giscus-box"></div>
 </div>
 
 <div class="card">
   <div>测试一下 GitHub Pages 发圈。</div>
   <div class="meta">2026-09-26 13:00</div>
-  <div class="giscus" data-term="moment-202609261300"></div>
+  <button class="comment-btn" data-term="moment-202609261300">💬 评论</button>
+  <div class="giscus-box"></div>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-  var base = {
-    'data-repo': 'ssq0324/ssq0324.github.io',
-    'data-repo-id': 'R_kgDOSefD-A',
-    'data-category': 'Announcements',
-    'data-category-id': 'DIC_kwDOSefD-M4DG3WR',
-    'data-mapping': 'specific',
-    'data-strict': '0',
-    'data-reactions-enabled': '1',
-    'data-emit-metadata': '0',
-    'data-input-position': 'bottom',
-    'data-theme': 'preferred_color_scheme',
-    'data-lang': 'zh-CN'
-  };
+// ===== 改成你自己的配置 =====
+var GISCUS_CONF = {
+  'data-repo': 'ssq0324/ssq0324.github.io',
+  'data-repo-id': 'R_kgDOSefD-A',
+  'data-category': 'Announcements',
+  'data-category-id': 'DIC_kwDOSefD-M4DG3WR',
+  'data-mapping': 'specific',
+  'data-strict': '0',
+  'data-reactions-enabled': '1',
+  'data-emit-metadata': '0',
+  'data-input-position': 'bottom',
+  'data-theme': 'preferred_color_scheme',
+  'data-lang': 'zh-CN'
+};
 
-  document.querySelectorAll('.giscus').forEach(function (el) {
-    var s = document.createElement('script');
-    s.src = 'https://giscus.app/client.js';
-    s.async = true;
-    s.crossOrigin = 'anonymous';
-    Object.keys(base).forEach(function (k) {
-      s.setAttribute(k, base[k]);
-    });
-    s.setAttribute('data-term', el.dataset.term || location.pathname);
-    el.appendChild(s);
+document.addEventListener('click', function (e) {
+  var btn = e.target.closest('.comment-btn');
+  if (!btn) return;
+
+  var box = btn.parentElement.querySelector('.giscus-box');
+  if (!box || box.dataset.loaded === '1') return;   // 已加载过就不再插
+
+  box.dataset.loaded = '1';
+  btn.textContent = '正在加载评论…';
+  btn.disabled = true;
+
+  var s = document.createElement('script');
+  s.src = 'https://giscus.app/client.js';
+  s.async = true;
+  s.crossOrigin = 'anonymous';
+  Object.keys(GISCUS_CONF).forEach(function (k) {
+    s.setAttribute(k, GISCUS_CONF[k]);
   });
+  s.setAttribute('data-term', btn.dataset.term);
+  box.appendChild(s);
 });
 </script>
 
